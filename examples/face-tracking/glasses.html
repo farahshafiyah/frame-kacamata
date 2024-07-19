@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.4.1/aframe.min.js"></script>
+    <script src="/src/face-target/aframe.js" type="module"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const list = ["glasses1", "glasses2", "hat1", "hat2", "earring"];
+        const visibles = [true, false, false, true, false];
+
+        const setVisible = (button, entities, visible) => {
+          if (visible) {
+            button.classList.add("selected");
+          } else {
+            button.classList.remove("selected");
+          }
+          entities.forEach((entity) => {
+            entity.setAttribute("visible", visible);
+          });
+        };
+
+        list.forEach((item, index) => {
+          const button = document.querySelector("#" + item);
+          const entities = document.querySelectorAll("." + item + "-entity");
+          setVisible(button, entities, visibles[index]);
+          button.addEventListener("click", () => {
+            visibles[index] = !visibles[index];
+            setVisible(button, entities, visibles[index]);
+          });
+        });
+      });
+    </script>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        width: 60%;
+        height: 80%;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .button-panel {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+      }
+      .button-panel img {
+        padding: 10px;
+        margin: 0 5px;
+        border: solid 2px #ddd;
+        border-radius: 10px;
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: transform 0.2s, border-color 0.2s;
+      }
+      .button-panel img:hover {
+        transform: scale(1.1);
+        border-color: #aaa;
+      }
+      .button-panel img.selected {
+        border-color: blue;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <a-scene
+        mindar-face
+        embedded
+        color-space="sRGB"
+        renderer="colorManagement: true, physicallyCorrectLights"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+        style="width: 100%; height: 100%;"
+      >
+        <a-assets>
+          <a-asset-item id="glassesModel" src="./assets/glasses/scene.gltf"></a-asset-item>
+          <a-asset-item id="glassesModel2" src="./assets/glasses2/scene.gltf"></a-asset-item>
+        </a-assets>
+
+        <a-camera active="false" position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <!-- head occluder -->
+        <a-entity mindar-face-target="anchorIndex: 168">
+          <a-gltf-model mindar-face-occluder position="0 -0.3 0.15" rotation="0 0 0" scale="0.065 0.065 0.065" src="#headModel"></a-gltf-model>
+        </a-entity>
+
+        <a-entity mindar-face-target="anchorIndex: 168">
+          <a-gltf-model rotation="0 -0 0" position="0 0 -0.1" scale="0.009 0.009 0.009" src="#glassesModel" class="glasses1-entity" visible="false"></a-gltf-model>
+        </a-entity>
+
+        <a-entity mindar-face-target="anchorIndex: 168">
+          <a-gltf-model rotation="0 -90 0" position="0 -0.4 -0.25" scale="0.6 0.6 0.6" src="#glassesModel2" class="glasses2-entity" visible="false"></a-gltf-model>
+        </a-entity>
+      </a-scene>
+    </div>
+    <div class="button-panel">
+      <img id="glasses1" src="./assets/glasses/thumbnail.png" />
+      <img id="glasses2" src="./assets/glasses2/thumbnail.png" />
+    </div>
+  </body>
+</html>
